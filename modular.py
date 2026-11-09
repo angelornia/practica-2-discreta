@@ -39,15 +39,19 @@ def es_primo(n:int)->bool:
     
     if n < 2:
         return False
+    if n == 2 or n == 3:
+        return True
+    if n % 2 == 0 or n % 3 == 0:
+        return False
 
-    divisor = 2
-
-    while divisor * divisor <= n:
-        if n % divisor == 0:
-         return False
-        divisor += 1
-
+    # Todo primo mayor que 3 es de la forma 6k-1 o 6k+1.
+    i = 5
+    while i * i <= n:
+        if n % i == 0 or n % (i + 2) == 0:
+            return False
+        i += 6
     return True
+
 
 
 def lista_primos(a,b)-> List[int]:

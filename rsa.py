@@ -286,4 +286,9 @@ def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
 
     return mensaje_interceptado
 
+
+#Prueba de descifrar el mensaje de X
+
+
+
     
