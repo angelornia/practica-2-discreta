@@ -38,8 +38,6 @@ def generar_claves(min_primo:int,max_primo:int)-> Tuple[int,int,int]:
 
 def generar_claves(min_primo: int, max_primo: int) -> Tuple[int, int, int]:
 
-    if min_primo >= max_primo:
-        raise ValueError("Intervalo incorrecto")
 
     if max_primo - min_primo < 1000:
 
