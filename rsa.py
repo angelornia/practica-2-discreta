@@ -36,31 +36,66 @@ def generar_claves(min_primo:int,max_primo:int)-> Tuple[int,int,int]:
         ValueError: Si no es posible encontrar una pareja de primos distintos p1,p2 entre min_primo y max_primo
     """
 
-    primos_potenciales = m.lista_primos(min_primo, max_primo)
+def generar_claves(min_primo: int, max_primo: int) -> Tuple[int, int, int]:
 
-    if len(primos_potenciales) < 2:
-        raise ValueError
-    
-    aleatorio_p1 = random.randint(0, (len(primos_potenciales)-1))
-    aleatorio_p2 = random.randint(0, (len(primos_potenciales)-1))
+    if min_primo >= max_primo:
+        raise ValueError("Intervalo incorrecto")
+
+    if max_primo - min_primo < 1000:
+
+        primos_encontrados = m.lista_primos(min_primo, max_primo)
+
+    else:
+        primos_encontrados = []
+        intentos = 0
+
+        primer_impar = max(3, min_primo)
+
+        if primer_impar % 2 == 0:
+            primer_impar += 1
+
+        if primer_impar < max_primo:
+
+            while len(primos_encontrados) < 2 and intentos < 1000:
+
+                numero = random.randrange(primer_impar, max_primo, 2)
+
+                if m.es_primo(numero) and numero not in primos_encontrados:
+                    primos_encontrados.append(numero)
+
+                intentos += 1
+
+        if len(primos_encontrados) < 2:
+            primos_encontrados = m.lista_primos(min_primo, max_primo)
+
+    if len(primos_encontrados) < 2:
+        raise ValueError("No hay dos primos distintos")
+
+    aleatorio_p1 = random.randint(0, len(primos_encontrados) - 1)
+    aleatorio_p2 = random.randint(0, len(primos_encontrados) - 1)
 
     while aleatorio_p1 == aleatorio_p2:
-        aleatorio_p2=random.randint(0, (len(primos_potenciales)-1))
+        aleatorio_p2 = random.randint(0, len(primos_encontrados) - 1)
 
-    p_1= primos_potenciales[aleatorio_p1]
-    p_2 = primos_potenciales[aleatorio_p2]
+    p_1 = primos_encontrados[aleatorio_p1]
+    p_2 = primos_encontrados[aleatorio_p2]
 
     n = p_1 * p_2
 
-    euler_n = (p_1 - 1) * (p_2 -1)
+    euler_n = (p_1 - 1) * (p_2 - 1)
 
-    e = random.randint(2, (euler_n - 1))
-    while not m.coprimos(euler_n, e):
-        e = random.randint(2, (euler_n - 1))
+    if euler_n == 2:
+        e = 3
+    else:
+        e = random.randint(2, euler_n - 1)
+
+        while not m.coprimos(euler_n, e):
+            e = random.randint(2, euler_n - 1)
 
     d = m.inversa_mod_p(e, euler_n)
 
     return (n, e, d)
+
 
 def aplicar_padding(m:int,digitos_padding:int)->int:
     """Dado un mensaje y un número de dígitos de padding, añade
