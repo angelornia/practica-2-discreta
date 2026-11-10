@@ -174,7 +174,8 @@ def cifrar_rsa(m:int,n:int,e:int,digitos_padding:int)->int:
 
     Raises: None
     """
-    pass
+    mensaje_con_padding = aplicar_padding(m, digitos_padding)
+    return m.potencia_mod_p(mensaje_con_padding, e, n)
 
 
 def descifrar_rsa(c:int,n:int,d:int,digitos_padding:int)->int:
@@ -195,7 +196,8 @@ def descifrar_rsa(c:int,n:int,d:int,digitos_padding:int)->int:
 
     Raises: None
     """
-    pass
+    mensaje_con_padding = m.potencia_mod_p(c, d, n)
+    return eliminar_padding(mensaje_con_padding, digitos_padding)
 
 
 def codificar_cadena(s:str)->List[int]:
@@ -213,7 +215,12 @@ def codificar_cadena(s:str)->List[int]:
     Example:
         codificar_cadena("¡Hola mundo!")=[161, 72, 111, 108, 97, 32, 109, 117, 110, 100, 111, 33]
     """
-    pass
+    codigos = []
+
+    for caracter in s:
+        codigos.append(ord(caracter))
+
+    return codigos
 
 
 def decodificar_cadena(m:List[int])->str:
@@ -232,7 +239,13 @@ def decodificar_cadena(m:List[int])->str:
     Example:
         decodificar_cadena([161, 72, 111, 108, 97, 32, 109, 117, 110, 100, 111, 33])="¡Hola mundo!"
     """
-    pass
+    cadena = ""
+
+    for codigo in m:
+        cadena += chr(codigo)
+
+    return cadena
+
 
 
 def cifrar_cadena_rsa(s:str,n:int,e:int,digitos_padding:int)->List[int]:
@@ -250,7 +263,13 @@ def cifrar_cadena_rsa(s:str,n:int,e:int,digitos_padding:int)->List[int]:
 
     Raises: None
     """
-    pass
+    mensaje_codificado = codificar_cadena(s)
+    mensaje_cifrado = []
+
+    for codigo in mensaje_codificado:
+        mensaje_cifrado.append(cifrar_rsa(codigo, n, e, digitos_padding))
+
+    return mensaje_cifrado
 
 
 def descifrar_cadena_rsa(cList:List[int],n:int,d:int,digitos_padding:int)->str:
@@ -268,7 +287,12 @@ def descifrar_cadena_rsa(cList:List[int],n:int,d:int,digitos_padding:int)->str:
     Raises:
         ValueError: Si, tras decodificar, alguno de los enteros del mensaje no representa un caracter unicode válido.    
     """
-    pass
+    mensaje_descifrado = []
+
+    for codigo_cifrado in cList:
+        mensaje_descifrado.append(descifrar_rsa(codigo_cifrado, n, d, digitos_padding))
+
+    return decodificar_cadena(mensaje_descifrado)
 
 
 def romper_clave(n:int,e:int)->int:
@@ -285,7 +309,24 @@ def romper_clave(n:int,e:int)->int:
     Raises:
         ValueError: Si no existe ninguna clave privada d compatible con la clave pública (n,e).
     """
-    pass
+    factores = m.factorizar(n)
+
+    if len(factores) != 2:
+        raise ValueError
+
+    primos = list(factores.keys())
+    p_1 = primos[0]
+    p_2 = primos[1]
+
+    if factores[p_1] != 1 or factores[p_2] != 1:
+        raise ValueError
+
+    euler_n = (p_1 - 1) * (p_2 - 1)
+
+    if not m.coprimos(e, euler_n):
+        raise ValueError
+
+    return m.inversa_mod_p(e, euler_n)
 
 
 def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
