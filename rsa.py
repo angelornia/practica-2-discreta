@@ -12,7 +12,7 @@ Integrantes:
 Descripción:
 Librería para la realización de cifrado y descifrado usando el algoritmo RSA.
 """
-import modular as m
+import modular as mod
 from typing import Tuple, List
 import random
 
@@ -41,7 +41,7 @@ def generar_claves(min_primo: int, max_primo: int) -> Tuple[int, int, int]:
 
     if max_primo - min_primo < 1000:
 
-        primos_encontrados = m.lista_primos(min_primo, max_primo)
+        primos_encontrados = mod.lista_primos(min_primo, max_primo)
 
     else:
         primos_encontrados = []
@@ -58,13 +58,13 @@ def generar_claves(min_primo: int, max_primo: int) -> Tuple[int, int, int]:
 
                 numero = random.randrange(primer_impar, max_primo, 2)
 
-                if m.es_primo(numero) and numero not in primos_encontrados:
+                if mod.es_primo(numero) and numero not in primos_encontrados:
                     primos_encontrados.append(numero)
 
                 intentos += 1
 
         if len(primos_encontrados) < 2:
-            primos_encontrados = m.lista_primos(min_primo, max_primo)
+            primos_encontrados = mod.lista_primos(min_primo, max_primo)
 
     if len(primos_encontrados) < 2:
         raise ValueError("No hay dos primos distintos")
@@ -87,10 +87,10 @@ def generar_claves(min_primo: int, max_primo: int) -> Tuple[int, int, int]:
     else:
         e = random.randint(2, euler_n - 1)
 
-        while not m.coprimos(euler_n, e):
+        while not mod.coprimos(euler_n, e):
             e = random.randint(2, euler_n - 1)
 
-    d = m.inversa_mod_p(e, euler_n)
+    d = mod.inversa_mod_p(e, euler_n)
 
     return (n, e, d)
 
@@ -173,7 +173,7 @@ def cifrar_rsa(m:int,n:int,e:int,digitos_padding:int)->int:
     Raises: None
     """
     mensaje_con_padding = aplicar_padding(m, digitos_padding)
-    return m.potencia_mod_p(mensaje_con_padding, e, n)
+    return mod.potencia_mod_p(mensaje_con_padding, e, n)
 
 
 def descifrar_rsa(c:int,n:int,d:int,digitos_padding:int)->int:
@@ -194,7 +194,7 @@ def descifrar_rsa(c:int,n:int,d:int,digitos_padding:int)->int:
 
     Raises: None
     """
-    mensaje_con_padding = m.potencia_mod_p(c, d, n)
+    mensaje_con_padding = mod.potencia_mod_p(c, d, n)
     return eliminar_padding(mensaje_con_padding, digitos_padding)
 
 
@@ -307,7 +307,7 @@ def romper_clave(n:int,e:int)->int:
     Raises:
         ValueError: Si no existe ninguna clave privada d compatible con la clave pública (n,e).
     """
-    factores = m.factorizar(n)
+    factores = mod.factorizar(n)
 
     if len(factores) != 2:
         raise ValueError
@@ -321,10 +321,10 @@ def romper_clave(n:int,e:int)->int:
 
     euler_n = (p_1 - 1) * (p_2 - 1)
 
-    if not m.coprimos(e, euler_n):
+    if not mod.coprimos(e, euler_n):
         raise ValueError
 
-    return m.inversa_mod_p(e, euler_n)
+    return mod.inversa_mod_p(e, euler_n)
 
 
 def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
@@ -352,7 +352,7 @@ def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
 
         else:
             for i in range(min(n, 1114112)):
-                if m.potencia_mod_p(i, e, n) == letra:
+                if mod.potencia_mod_p(i, e, n) == letra:
                     letra_interceptada = chr(i)
                     letras_descifradas[letra] = letra_interceptada
                     mensaje_interceptado += letra_interceptada
