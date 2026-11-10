@@ -4,7 +4,7 @@ rsa.py
 Matemática Discreta - IMAT
 ICAI, Universidad Pontificia Comillas
 
-Grupo: GPxxx
+Grupo: GP20B
 Integrantes:
     - Ángel Ornia Rodríguez
     - David Puente Zulueta
@@ -35,9 +35,6 @@ def generar_claves(min_primo:int,max_primo:int)-> Tuple[int,int,int]:
     Raises:
         ValueError: Si no es posible encontrar una pareja de primos distintos p1,p2 entre min_primo y max_primo
     """
-
-def generar_claves(min_primo: int, max_primo: int) -> Tuple[int, int, int]:
-
 
     if max_primo - min_primo < 1000:
 
@@ -349,15 +346,19 @@ def ataque_texto_elegido(cList:List[int],n:int,e:int)->str:
     for letra in cList:
         if letra in letras_descifradas:
             mensaje_interceptado += letras_descifradas[letra]
-
         else:
+            encontrado = False
             for i in range(min(n, 1114112)):
                 if mod.potencia_mod_p(i, e, n) == letra:
                     letra_interceptada = chr(i)
                     letras_descifradas[letra] = letra_interceptada
                     mensaje_interceptado += letra_interceptada
+                    encontrado = True
                     break
 
+        if not encontrado:
+                raise ValueError("No se ha podido descifrar el carácter")
+        
     return mensaje_interceptado
 
 
