@@ -1,8 +1,3 @@
-"""
-criptochat.py
-
-Chat de texto con cifrado y descifrado RSA.
-"""
 
 import os
 import sys
